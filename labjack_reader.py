@@ -8,31 +8,35 @@ from labjack import ljm
 
 from mysql.connector.constants import ClientFlag
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  passwd="",
-  database="trusur_aqm"
-)
-
-mycursor = mydb.cursor()
-
+try:
+    mydb = mysql.connector.connect(host="localhost",user="root",passwd="",database="trusur_aqm")
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT id FROM aqm_show WHERE id=1")
+    mycursor.fetchall()
+    if mycursor.rowcount <= 0:    
+        mycursor.execute("INSERT INTO aqm_show (id) VALUES (1)")
+        mydb.commit()
+except Exception as e: 
+    print(e)
+    
+try:
+    labjack = ljm.openS("ANY", "ANY", "ANY")
+except:
+    print("Labjack Error")
 
 while True:
-
     try:
-        handle = ljm.openS("ANY", "ANY", "ANY")
-        ain0 = ljm.eReadName(handle, "AIN0")
-        ain1 = ljm.eReadName(handle, "AIN1")
+        # labjack = ljm.openS("ANY", "ANY", "ANY")
+        v_ain0 = ljm.eReadName(labjack, "AIN0")
+        v_ain1 = ljm.eReadName(labjack, "AIN1")
         
-        
-
-        sql = "UPDATE aqm_data SET waktu=NOW(),pm10 = %s,pm25 = %s WHERE id = %s"
-        val = (ain0,ain1,"1863")
+        sql = "UPDATE aqm_show SET pm10 = %s,pm25 = %s WHERE id = 1"
+        val = (v_ain0,v_ain1)
         mycursor.execute(sql, val)
         mydb.commit()
         print("Val = %f ; %f" % (ain0,ain1))
-    except:
-        print("Labjack Error")
-    
+        
+    except Exception as e: 
+        print(e)
+
     time.sleep(1) 
