@@ -1,11 +1,9 @@
 from __future__ import print_function
-
 import sys
 import time
 import mysql.connector
 from labjack import ljm
 import serial
-
 
 from mysql.connector.constants import ClientFlag
 from pyvantagepro import VantagePro2
@@ -17,12 +15,12 @@ AIN3 = 0
 PM10 = ""
 PM25 = ""
 WS = ""
+cur_pump_state = "0"
 is_labjack = False
 is_COM_PM10 = False
 is_COM_PM25 = False
 is_COM_WS = False
-
-
+is_Arduino = False
 
 try:
     mydb = mysql.connector.connect(host="localhost",user="root",passwd="",database="trusur_aqm")
@@ -82,17 +80,31 @@ try:
     rec = mycursor.fetchone()
     for row in rec: serial_rate = rec[0]
     
-    # COM_WS = serial.Serial()
-    # COM_WS.port = serial_port
-    # COM_WS.baudrate = serial_rate
-    # COM_WS.timeout = 1
-    # COM_WS.setDTR(True)
-    # COM_WS.open()
     COM_WS = VantagePro2.from_url("serial:%s:%s:8N1" % (serial_port,serial_rate))
     is_COM_WS = True
     print("[V] COM_WS CONNECTED")
 except:
     print("    [X] COM_WS not connected")
+    
+try:
+    mycursor.execute("SELECT content FROM aqm_configuration WHERE data = 'controller'")
+    rec = mycursor.fetchone()
+    for row in rec: serial_port = rec[0]
+    
+    mycursor.execute("SELECT content FROM aqm_configuration WHERE data = 'controller_baud'")
+    rec = mycursor.fetchone()
+    for row in rec: serial_rate = rec[0]
+    
+    Arduino = serial.Serial(serial_port, serial_rate)
+    is_Arduino = True
+    print("[V] ARDUINO CONNECTED")
+    mycursor.execute("UPDATE aqm_configuration SET content = 0 WHERE data = 'pump_state'")
+    mydb.commit()
+    mycursor.execute("UPDATE aqm_configuration SET content = NOW() WHERE data = 'pump_last'")
+    mydb.commit()
+    
+except:
+    print("    [X] ARDUINO not connected")
     
     
 while True:
@@ -112,13 +124,24 @@ while True:
         if is_COM_WS:
             ws_data = COM_WS.get_current_data()
             WS = ws_data.to_csv(';',False)
+            
+        if is_Arduino:
+            mycursor.execute("SELECT content FROM aqm_configuration WHERE data = 'pump_state'")
+            rec = mycursor.fetchone()
+            for row in rec: pump_state = rec[0]
+            if pump_state != cur_pump_state:
+                cur_pump_state = pump_state
+                if cur_pump_state == "1":
+                    Arduino.write(b'i');
+                else:
+                    Arduino.write(b'j');
         
         sql = "UPDATE aqm_sensor_values SET AIN0 = %s, AIN1 = %s, AIN2 = %s, AIN3 = %s, PM25 = %s, PM10 = %s, WS = %s WHERE id = 1"
         val = (AIN0,AIN1,AIN2,AIN3,PM25,PM10,WS)
         mycursor.execute(sql, val)
         mydb.commit()
         
-        print("AIN0 = %f ; AIN1 = %f ; AIN2 = %f ; AIN3 = %f ; PM10 = %s;  PM25 = %s ; WS = %s ; " % (AIN0,AIN1,AIN2,AIN3,PM10,PM25,WS))
+        print("AIN0 = %f ; AIN1 = %f ; AIN2 = %f ; AIN3 = %f ; PM10 = %s;  PM25 = %s ; WS = %s ; cur_pump_state = %s" % (AIN0,AIN1,AIN2,AIN3,PM10,PM25,WS,cur_pump_state))
         print("=========================================================================================================================");
         
     except Exception as e: 
