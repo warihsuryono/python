@@ -23,7 +23,7 @@ is_COM_WS = False
 is_Arduino = False
 
 try:
-    mydb = mysql.connector.connect(host="localhost",user="root",passwd="",database="trusur_aqm")
+    mydb = mysql.connector.connect(host="localhost",user="root",passwd="root",database="trusur_aqm")
     mycursor = mydb.cursor()
     mycursor.execute("SELECT id FROM aqm_sensor_values WHERE id=1")
     mycursor.fetchall()
@@ -32,7 +32,7 @@ try:
         mydb.commit()
     print("[V] Database CONNECTED")
 except Exception as e: 
-    print("    [X] " + e)
+    print(e)
     
 try:
     labjack = ljm.openS("ANY", "ANY", "ANY")
@@ -110,31 +110,53 @@ except:
 while True:
     try:
         if is_labjack:
-            AIN0 = ljm.eReadName(labjack, "AIN0")
-            AIN1 = ljm.eReadName(labjack, "AIN1")
-            AIN2 = ljm.eReadName(labjack, "AIN2")
-            AIN3 = ljm.eReadName(labjack, "AIN3")
+            try:
+                AIN0 = ljm.eReadName(labjack, "AIN0")
+                AIN1 = ljm.eReadName(labjack, "AIN1")
+                AIN2 = ljm.eReadName(labjack, "AIN2")
+                AIN3 = ljm.eReadName(labjack, "AIN3")
+            except Exception as e: 
+                print(e)
+                AIN0 = 0
+                AIN1 = 0
+                AIN2 = 0
+                AIN3 = 0
         
         if is_COM_PM10:
-            PM10 = str(COM_PM10.readline());
+            try:
+                PM10 = str(COM_PM10.readline());
+            except Exception as e: 
+                print(e)
+                PM10 = ""
             
         if is_COM_PM25:
-            PM25 = str(COM_PM25.readline());
+            try:
+                PM25 = str(COM_PM25.readline());
+            except Exception as e: 
+                print(e)
+                PM25 = ""
             
         if is_COM_WS:
-            ws_data = COM_WS.get_current_data()
-            WS = ws_data.to_csv(';',False)
+            try:
+                ws_data = COM_WS.get_current_data()
+                WS = ws_data.to_csv(';',False)
+            except Exception as e: 
+                print(e)
+                WS = ""
             
         if is_Arduino:
-            mycursor.execute("SELECT content FROM aqm_configuration WHERE data = 'pump_state'")
-            rec = mycursor.fetchone()
-            for row in rec: pump_state = rec[0]
-            if pump_state != cur_pump_state:
-                cur_pump_state = pump_state
-                if cur_pump_state == "1":
-                    Arduino.write(b'i');
-                else:
-                    Arduino.write(b'j');
+            try:
+                mycursor.execute("SELECT content FROM aqm_configuration WHERE data = 'pump_state'")
+                rec = mycursor.fetchone()
+                for row in rec: pump_state = rec[0]
+                if pump_state != cur_pump_state:
+                    cur_pump_state = pump_state
+                    if cur_pump_state == "1":
+                        Arduino.write(b'i');
+                    else:
+                        Arduino.write(b'j');
+            except Exception as e: 
+                print(e)
         
         sql = "UPDATE aqm_sensor_values SET AIN0 = %s, AIN1 = %s, AIN2 = %s, AIN3 = %s, PM25 = %s, PM10 = %s, WS = %s WHERE id = 1"
         val = (AIN0,AIN1,AIN2,AIN3,PM25,PM10,WS)
