@@ -6,11 +6,10 @@ auto login
 	Select the user account that you want to log in to automatically at startup.
 	Press Unlock in the top right corner and type in your password when prompted.
 	Switch the Automatic Login switch to on.
-Auto Hide hte launcher
+Auto Hide the launcher
 	All setting => appearance ==> behavior ==> "on"
 	
-set never logoff	
-set never sleep
+set never logoff/sleep:
 		all settings => brightness&Lock
 		
 software & updates ganti ke "main server"
@@ -62,4 +61,7 @@ Install Labjack
 cd~
 rm sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.py
-echo admin | sudo -S python sensor_reader.py
+wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.sh
+sudo vim /etc/rc.local
+add: echo admin | sudo -S python ~/sensor_reader.py
+restart
