@@ -50,9 +50,13 @@ try:
     rec = mycursor.fetchone()
     for row in rec: serial_rate = rec[0]
     
-    COM_PM10 = serial.Serial(serial_port, serial_rate)
-    is_COM_PM10 = True
-    print("[V] COM_PM10 CONNECTED")
+    if serial_port != "":
+        COM_PM10 = serial.Serial(serial_port, serial_rate)
+        is_COM_PM10 = True
+        print("[V] COM_PM10 CONNECTED")
+    else:
+        print("    [X] COM_PM10 not connected")
+        
 except:
     print("    [X] COM_PM10 not connected")
     
@@ -65,9 +69,13 @@ try:
     rec = mycursor.fetchone()
     for row in rec: serial_rate = rec[0]
     
-    COM_PM25 = serial.Serial(serial_port, serial_rate)
-    is_COM_PM25 = True
-    print("[V] COM_PM25 CONNECTED")
+    if serial_port != "":
+        COM_PM25 = serial.Serial(serial_port, serial_rate)
+        is_COM_PM25 = True
+        print("[V] COM_PM25 CONNECTED")
+    else:
+        print("    [X] COM_PM25 not connected")
+        
 except:
     print("    [X] COM_PM25 not connected")
     
@@ -80,9 +88,13 @@ try:
     rec = mycursor.fetchone()
     for row in rec: serial_rate = rec[0]
     
-    COM_WS = VantagePro2.from_url("serial:%s:%s:8N1" % (serial_port,serial_rate))
-    is_COM_WS = True
-    print("[V] COM_WS CONNECTED")
+    if serial_port != "":
+        COM_WS = VantagePro2.from_url("serial:%s:%s:8N1" % (serial_port,serial_rate))
+        is_COM_WS = True
+        print("[V] COM_WS CONNECTED")
+    else:
+        print("    [X] COM_WS not connected")
+    
 except:
     print("    [X] COM_WS not connected")
     
@@ -95,14 +107,17 @@ try:
     rec = mycursor.fetchone()
     for row in rec: serial_rate = rec[0]
     
-    Arduino = serial.Serial(serial_port, serial_rate)
-    is_Arduino = True
-    print("[V] ARDUINO CONNECTED")
-    mycursor.execute("UPDATE aqm_configuration SET content = 0 WHERE data = 'pump_state'")
-    mydb.commit()
-    mycursor.execute("UPDATE aqm_configuration SET content = NOW() WHERE data = 'pump_last'")
-    mydb.commit()
-    
+    if serial_port != "":
+        Arduino = serial.Serial(serial_port, serial_rate)
+        is_Arduino = True
+        print("[V] ARDUINO CONNECTED")
+        mycursor.execute("UPDATE aqm_configuration SET content = 0 WHERE data = 'pump_state'")
+        mydb.commit()
+        mycursor.execute("UPDATE aqm_configuration SET content = NOW() WHERE data = 'pump_last'")
+        mydb.commit()
+    else:  
+        print("    [X] ARDUINO not connected")
+        
 except:
     print("    [X] ARDUINO not connected")
     
