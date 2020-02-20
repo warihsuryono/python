@@ -64,9 +64,9 @@ cd ~
 rm sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.sh
+wget https://raw.githubusercontent.com/warihsuryono/python/master/aqm_show.sh
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.desktop
 wget https://raw.githubusercontent.com/warihsuryono/python/master/aqm.desktop
 mv sensor_reader.desktop ~/.config/autostart/sensor_reader.desktop 
 mv aqm.desktop ~/.config/autostart/aqm.desktop 
-
 sudo reboot
