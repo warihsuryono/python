@@ -1,4 +1,4 @@
 #!/bin/bash
 firefox http://localhost/aqmmaster/ &
 sleep 5
-xdotool key F11
+xdotool search --sync --onlyvisible --pid $! windowactivate key F11

@@ -23,6 +23,7 @@ sudo apt-get update
 sudo apt-get install vim
 sudo apt-get install git
 sudo apt install python-pip
+sudo apt install xdotool
 pip install --upgrade pip
 pip install mysql-connector-python
 pip install labjack-ljm
