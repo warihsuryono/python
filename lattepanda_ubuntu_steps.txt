@@ -62,6 +62,6 @@ cd~
 rm sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.sh
-sudo vim /etc/rc.local
-add: echo admin | sudo -S python ~/sensor_reader.py
+crontab -e
+add: @reboot sh ~/sensor_reader.sh
 restart
