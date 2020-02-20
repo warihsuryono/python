@@ -14,6 +14,10 @@ set never logoff/sleep:
 		all settings => brightness&Lock
 		
 software & updates ganti ke "main server"
+
+install teamviewer*.deb
+	setting autostart
+	register
 	
 sudo apt-get update
 sudo apt-get install vim
@@ -25,10 +29,6 @@ pip install labjack-ljm
 pip install pyserial
 pip install pyvantagepro
 
-install teamviewer*.deb
-	setting autostart
-	register
-	
 install lampp
 	sudo apt-get install -y apache2
 	sudo apt-get install mysql-server mysql-client libmysqlclient-dev
@@ -47,22 +47,25 @@ sudo service apache2 restart
 
 cd /var/www/html/
 git clone https://github.com/trusursidik12/aqmmaster.git
-git clone https://github.com/phpmyadmin/phpmyadmin.git
 cd aqmmaster
 mysql -u root -p < new_database.sql
 mv MyAdmin.zip ../MyAdmin.zip
 cd ..
 unzip MyAdmin.zip
 
+cd ~
 Install Labjack
 	wget https://labjack.com/sites/default/files/software/labjack_ljm_software_2019_07_16_x86_64.tar.gz
 	tar -zvxf labjack_ljm_software_2019_07_16_x86_64.tar.gz
+	cd labjack_ljm_software_2019_07_16_x86_64/
 	sudo ./labjack_ljm_installer.run
 
-cd~
+cd ~
 rm sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.py
 wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.sh
+wget https://raw.githubusercontent.com/warihsuryono/python/master/sensor_reader.desktop
+mv sensor_reader.desktop ~/.config/autostart/sensor_reader.desktop 
 crontab -e
 add: @reboot sh ~/sensor_reader.sh
 restart
