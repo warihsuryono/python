@@ -1,4 +1,5 @@
 clone ubuntu 16
+koneksi internet
 wget https://raw.githubusercontent.com/warihsuryono/python/master/lattepanda_ubuntu_steps.txt
 auto login
 	open the Activities overview and start typing Users.
