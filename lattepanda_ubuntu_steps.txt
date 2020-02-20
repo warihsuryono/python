@@ -78,7 +78,7 @@ mv aqm.desktop ~/.config/autostart/aqm.desktop
 cp launch_aqm.desktop ~/Desktop/launch_aqm.desktop
 cp launch_sensor_demo.desktop ~/Desktop/launch_sensor_demo.desktop
 cp launch_sensor_reader.desktop ~/Desktop/launch_sensor_reader.desktop
-chmod +x launch_aqm.desktop
-chmod +x launch_sensor_demo.desktop
-chmod +x launch_sensor_reader.desktop
+chmod +x ~/Desktop/launch_aqm.desktop
+chmod +x ~/Desktop/launch_sensor_demo.desktop
+chmod +x ~/Desktop/launch_sensor_reader.desktop
 sudo reboot

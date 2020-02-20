@@ -6,5 +6,5 @@ Name=Sensor Reader
 Comment=Sensor Reader
 Icon=gnome-info
 Exec=sh /home/admin/sensor_reader.sh
-Terminal=false
+Terminal=true
 Type=Application
